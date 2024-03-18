@@ -1,7 +1,7 @@
 // IMPORTS
 
 // 1 - quando clicar na lixeira remover da galeria // ESTÁ REMOVENDO DO MODAL FALTA DA GALERIA
-// 2 - permitir foto com flash // FALTA O FLASH
+// 2 - permitir foto com flash // FLASH FUNCIONA AO TIRAR A FOTO
 // 3 - botão para recaregar o auto focus // FALTA O BOTÃO
 // 4 - carregar e salvar vídeo // FALTA ALGUNS AJUSTES
 
@@ -47,15 +47,15 @@ export default function App() {
   }
 
   // FLASH DA CAMERA
-  // const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
-  const [flash, setFlash] = useState( FlashMode.off )
+  // FUNCIONA AO CAPTURAR A FOTO
+  const [ flash, setFlash ] = useState( FlashMode.off )
 
   function FlashCamera() {
-    if (flash === FlashMode.off) {
-      setFlash(FlashMode.on);
+    if ( flash === FlashMode.off ) {
+      setFlash( FlashMode.on );
       alert("Flash On");
     } else {
-      setFlash(FlashMode.off);
+      setFlash( FlashMode.off );
       alert("Flash Off");
     }
   }
@@ -89,8 +89,9 @@ export default function App() {
   async function captureVideo() {
     if (cameraRef.current) {
       const video = await cameraRef.current.recordAsync({
-        quality: Camera.Constants.VideoQuality['720p'],
-        maxDuration: 15
+        quality: Camera.Constants.VideoQuality['1080p'],
+        maxDuration: 15,
+        
       });
       setVideo( video.uri )
       setOpenVideoModal( true )
@@ -113,6 +114,17 @@ export default function App() {
     setOpenVideoModal( false )
   }
 
+  async function deleteAsset(assetId) {
+ // Create a temporary album
+ const { id: tempAlbumId } = await MediaLibrary.createAlbumAsync('TempAlbum', assetId, false);
+
+ // Move the asset to the temporary album
+ await MediaLibrary.addAssetsToAlbumAsync([assetId], tempAlbumId, false);
+
+ // Delete the temporary album (and all assets within it)
+ await MediaLibrary.deleteAlbumsAsync([tempAlbumId], true);
+}
+
   // FUNÇÃO DE EXCLUIR FOTO E RETOMAR PARA A CÂMERA
   async function DeletePhoto() {
     try {
@@ -133,9 +145,9 @@ export default function App() {
        await MediaLibrary.deleteAssetsAsync([asset.id]);
        setVideo(null);
        setOpenVideoModal(false);
-       alert("Foto Deletada com sucesso!");
+       alert("Video Deletada com sucesso!");
     } catch (error) {
-       alert("Não foi possivel excluir a imagem.");
+       alert("Não foi possivel excluir o Video.");
     }
    }
 
@@ -170,8 +182,6 @@ export default function App() {
       <TouchableOpacity onPress={ () => CapturePhoto() } style={ styles.btnCapture }>
         <FontAwesome name='camera' size={15} color='#FFFFFF' />
       </TouchableOpacity>
-      
-
 
       {/* BOTÃO DE CAPTURAR VÍDEO */}
       <TouchableOpacity onPress={ () => captureVideo() } style={ styles.btnCapture }>

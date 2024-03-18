@@ -9,7 +9,10 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "isAccessMediaLocationEnabled": true,
+      "recordAudioAndroid": true
+      
     },
     "assetBundlePatterns": [
       "**/*"
